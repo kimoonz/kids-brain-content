@@ -20,10 +20,10 @@ const en = x => !Array.isArray(x) || !str(x[0], 8) ? '[그림 이모지, word]' 
 const s = x => str(x, 60) ? '' : '60자 이하 글자 (< > & 금지)';
 
 if (!(Number.isInteger(c.version) && c.version > 0)) errs.push('version: 1 이상의 정수여야 함');
-['ox', 'ko'].forEach(k => { if (c[k] !== undefined && !(Array.isArray(c[k]) && c[k].length === 2)) errs.push(`${k}: [7살 목록, 10살 목록] 두 개여야 함`); });
-if (Array.isArray(c.ox) && c.ox.length === 2) { list('OX 7살', c.ox[0], 10, ox); list('OX 10살', c.ox[1], 10, ox); }
-if (Array.isArray(c.ko) && c.ko.length === 2) { list('한글 7살', c.ko[0], 8, ko); list('한글 10살', c.ko[1], 8, ko); }
-list('영어(앞 25개는 7살용 쉬운 낱말)', c.en, 30, en);
+['ox', 'ko'].forEach(k => { if (c[k] !== undefined && !(Array.isArray(c[k]) && c[k].length === 2)) errs.push(`${k}: [8살 목록, 11살 목록] 두 개여야 함`); });
+if (Array.isArray(c.ox) && c.ox.length === 2) { list('OX 8살', c.ox[0], 10, ox); list('OX 11살', c.ox[1], 10, ox); }
+if (Array.isArray(c.ko) && c.ko.length === 2) { list('한글 8살', c.ko[0], 8, ko); list('한글 11살', c.ko[1], 8, ko); }
+list('영어(앞 25개는 8살용 쉬운 낱말)', c.en, 30, en);
 list('농담', c.jokes, 5, s); list('이겼을 때 한마디', c.wins, 3, s); list('졌을 때 한마디', c.loses, 3, s);
 
 warn.forEach(w => console.log('⚠️ ', w));
