@@ -1,5 +1,6 @@
 name: content.json 검사
 on:
+  workflow_dispatch:   # Actions 탭에서 손으로 돌려 볼 수 있게
   push:
     paths: ['content.json', 'check.js']
   pull_request:
