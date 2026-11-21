@@ -26,6 +26,21 @@ if (Array.isArray(c.ko) && c.ko.length === 2) { list('한글 8살', c.ko[0], 8, 
 list('영어(앞 25개는 8살용 쉬운 낱말)', c.en, 30, en);
 list('농담', c.jokes, 5, s); list('이겼을 때 한마디', c.wins, 3, s); list('졌을 때 한마디', c.loses, 3, s);
 
+// v2.2 영어 문장 은행 — 앱 content.js 와 같은 규칙
+const W = (a, n, max) => Array.isArray(a) && a.length >= n && a.length <= max && a.every(w => str(w, 24));
+const sent2 = x => !Array.isArray(x) ? '[영어 문장, 우리말 뜻, [헷갈리는 낱말]]' : !str(x[0], 160) || !/[.?!]$/.test(x[0].trim()) ? '영어 문장은 . ? ! 로 끝나야 함' : x[0].trim().split(' ').length < 3 ? '3낱말 이상' : !str(x[1]) ? '우리말 뜻이 없음' : !(x[2] === undefined || W(x[2], 0, 4)) ? '헷갈리는 낱말은 4개까지' : '';
+const ctx = x => !Array.isArray(x) || x.length !== 4 ? '[빈칸 문장, 정답, [오답 3개], 뜻]' : x[0].split('___').length !== 2 ? '빈칸 ___ 이 정확히 하나' : !str(x[1], 24) ? '정답 낱말' : !W(x[2], 3, 3) ? '오답은 3개' : x[2].includes(x[1]) ? '오답에 정답이 섞임' : !str(x[3]) ? '뜻' : '';
+const gram = x => !Array.isArray(x) || x.length !== 4 ? '[빈칸 문장, [보기], 정답 번호(0부터), 규칙 설명]' : x[0].split('___').length !== 2 ? '빈칸 ___ 이 정확히 하나' : !W(x[1], 2, 4) || new Set(x[1]).size !== x[1].length ? '보기 2~4개, 서로 달라야' : !(Number.isInteger(x[2]) && x[2] >= 0 && x[2] < x[1].length) ? '정답 번호가 보기 범위 밖' : !str(x[3]) ? '규칙 설명' : '';
+const lis2 = x => !Array.isArray(x) || x.length !== 3 ? '[들려줄 글, 질문, [보기 3개 — 첫 번째가 정답]]' : !str(x[0], 300) ? '들려줄 글(300자 이하)' : !str(x[1]) ? '질문' : !(Array.isArray(x[2]) && x[2].length === 3 && x[2].every(c => str(c, 60))) || new Set(x[2]).size !== 3 ? '보기 3개(각 60자 이하), 서로 달라야' : '';
+const read = x => !Array.isArray(x) || !str(x[0], 800) ? '[글, [[질문, [보기 3개 — 첫 번째가 정답], 근거 문장], 질문2]]' : !Array.isArray(x[1]) || x[1].length !== 2 ? '질문은 2개' :
+  x[1].map((q, k) => !Array.isArray(q) || !str(q[0]) ? `질문${k + 1}` : !(Array.isArray(q[1]) && q[1].length === 3 && q[1].every(c => str(c, 60))) || new Set(q[1]).size !== 3 ? `질문${k + 1} 보기 3개(각 60자 이하)` : !str(q[2], 200) || !x[0].includes(q[2]) ? `질문${k + 1} 근거 문장이 글에 그대로 있어야 함` : '').filter(Boolean).join(', ');
+for (const [k, nm, min, f] of [['sent2', '영어 문장', 8, sent2], ['ctx', '알맞은 낱말', 10, ctx], ['gram', '문법 빈칸', 10, gram], ['lis2', '듣기 대화', 7, lis2], ['read', '독해 글', 3, read]]) {
+  if (c[k] === undefined) { warn.push(`${nm}: 없음 (앱 기본값 사용)`); continue; }
+  if (!(Array.isArray(c[k]) && c[k].length === 2)) { errs.push(`${k}: [8살 목록, 11살 목록] 두 개여야 함`); continue; }
+  list(`${nm} 8살`, c[k][0], min, f); list(`${nm} 11살`, c[k][1], min, f);
+}
+
 warn.forEach(w => console.log('⚠️ ', w));
 if (errs.length) { errs.forEach(e => console.error('❌', e)); console.error(`\n${errs.length}개 오류 — 이대로 두면 앱은 틀린 항목을 무시하고 기본 문제를 씁니다.`); process.exit(1); }
-console.log(`✅ 통과 (version ${c.version}) — OX ${c.ox ? c.ox[0].length + '/' + c.ox[1].length : '-'}, 한글 ${c.ko ? c.ko[0].length + '/' + c.ko[1].length : '-'}, 영어 ${c.en ? c.en.length : '-'}`);
+const n2 = k => c[k] ? c[k][0].length + '/' + c[k][1].length : '-';
+console.log(`✅ 통과 (version ${c.version}) — OX ${n2('ox')}, 한글 ${n2('ko')}, 영어 낱말 ${c.en ? c.en.length : '-'}, 문장 ${n2('sent2')}, 알맞은 낱말 ${n2('ctx')}, 문법 ${n2('gram')}, 듣기 ${n2('lis2')}, 독해 ${n2('read')}`);
