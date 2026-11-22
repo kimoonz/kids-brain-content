@@ -1,10 +1,10 @@
-name: content.json 검사
+name: content.json · app.json 검사
 on:
   workflow_dispatch:   # Actions 탭에서 손으로 돌려 볼 수 있게
   push:
-    paths: ['content.json', 'check.js']
+    paths: ['content.json', 'check.js', 'app.json', 'check_app.js']
   pull_request:
-    paths: ['content.json', 'check.js']
+    paths: ['content.json', 'check.js', 'app.json', 'check_app.js']
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -14,3 +14,4 @@ jobs:
         with:
           node-version: 20
       - run: node check.js
+      - run: node check_app.js
