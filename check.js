@@ -24,7 +24,7 @@ if (!(Number.isInteger(c.version) && c.version > 0)) errs.push('version: 1 이�
 if (Array.isArray(c.ox) && c.ox.length === 2) { list('OX 8살', c.ox[0], 10, ox); list('OX 11살', c.ox[1], 10, ox); }
 if (Array.isArray(c.ko) && c.ko.length === 2) { list('한글 8살', c.ko[0], 8, ko); list('한글 11살', c.ko[1], 8, ko); }
 list('영어(앞 25개는 8살용 쉬운 낱말)', c.en, 30, en);
-list('농담', c.jokes, 5, s); list('이겼을 때 한마디', c.wins, 3, s); list('졌을 때 한마디', c.loses, 3, s);
+list('농담', c.jokes, 5, s); list('넌센스 퀴즈', c.riddles, 10, x => !Array.isArray(x) || x.length !== 2 ? '[질문, 답] 두 칸' : !str(x[0], 60) ? '질문은 60자 이하 (< > & 금지)' : !str(x[1], 30) ? '답은 30자 이하' : ''); list('이겼을 때 한마디', c.wins, 3, s); list('졌을 때 한마디', c.loses, 3, s);
 
 // v2.2 영어 문장 은행 — 앱 content.js 와 같은 규칙
 const W = (a, n, max) => Array.isArray(a) && a.length >= n && a.length <= max && a.every(w => str(w, 24));
@@ -43,4 +43,4 @@ for (const [k, nm, min, f] of [['sent2', '영어 문장', 8, sent2], ['ctx', '�
 warn.forEach(w => console.log('⚠️ ', w));
 if (errs.length) { errs.forEach(e => console.error('❌', e)); console.error(`\n${errs.length}개 오류 — 이대로 두면 앱은 틀린 항목을 무시하고 기본 문제를 씁니다.`); process.exit(1); }
 const n2 = k => c[k] ? c[k][0].length + '/' + c[k][1].length : '-';
-console.log(`✅ 통과 (version ${c.version}) — OX ${n2('ox')}, 한글 ${n2('ko')}, 영어 낱말 ${c.en ? c.en.length : '-'}, 문장 ${n2('sent2')}, 알맞은 낱말 ${n2('ctx')}, 문법 ${n2('gram')}, 듣기 ${n2('lis2')}, 독해 ${n2('read')}`);
+console.log(`✅ 통과 (version ${c.version}) — OX ${n2('ox')}, 한글 ${n2('ko')}, 영어 낱말 ${c.en ? c.en.length : '-'}, 문장 ${n2('sent2')}, 알맞은 낱말 ${n2('ctx')}, 문법 ${n2('gram')}, 듣기 ${n2('lis2')}, 독해 ${n2('read')}, 농담 ${c.jokes ? c.jokes.length : '-'}, 넌센스 퀴즈 ${c.riddles ? c.riddles.length : '-'}`);
